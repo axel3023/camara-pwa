@@ -1,0 +1,21 @@
+{
+    "name": "Mi PWA de Gestion de Tareas",
+    "short_name": "Camara PWA",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#1A202C",
+    "theme_color": "#4A90E2",
+    "description": "Una aplicacion para gestionar tus tareas diarias de manera eficiente.,funciona offline",
+    "icons": [
+        {
+            "src": "/img/icons/192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/img/icons/512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}
