@@ -1,6 +1,6 @@
 const CACHE_NAME = 'camara-pwa-v1'
 const urlsToCache = [
-    '/',
+    '/camara-pwa/',
     '/camara-pwa/app.js',
     '/camara-pwa/index.html',
     '/camara-pwa/img/icons',
