@@ -77,6 +77,9 @@ function takePhoto() {
     });
     
     console.log('Foto capturada en base64:', imageDataURL.length, 'caracteres');
+    
+ 
+    closeCamera(); 
 }
 
 function closeCamera() {
@@ -200,6 +203,7 @@ async function deletePhoto(id) {
 }
 
 
+
 function renderGallery(photos) {
     photoGallery.innerHTML = ''; 
 
@@ -220,6 +224,7 @@ function renderGallery(photos) {
         photoGallery.appendChild(img);
     });
 }
+
 
 
 
