@@ -7,28 +7,26 @@ if('serviceWorker' in navigator) {
     });
 }
 
-// Referencias a elementos del DOM
+
 const openCameraBtn = document.getElementById('openCamera');
 const cameraContainer = document.getElementById('cameraContainer');
 const video = document.getElementById('video');
 const takePhotoBtn = document.getElementById('takePhoto');
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d'); 
-// NUEVAS REFERENCIAS DE LA GALERÍA
+
 const clearPhotosBtn = document.getElementById('clearPhotosBtn'); 
 const photoGallery = document.getElementById('photoGallery'); 
 
 let stream = null; 
 
-// ======================================================================
-// 🚀 LÓGICA DE CÁMARA
-// ======================================================================
+
 
 async function openCamera() {
     try {
         const constraints = {
             video: {
-                // *** MODIFICADO para solicitar la cámara frontal (user) ***
+                
                 facingMode: { ideal: 'user' }, 
                 width: { ideal: 320 },
                 height: { ideal: 240 }
@@ -56,23 +54,23 @@ function takePhoto() {
         return;
     }
 
-    // Asegurar que el canvas tiene el mismo tamaño que el video para la captura
+    
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
     
-    // Conversión a Data URL
+    
     const imageDataURL = canvas.toDataURL('image/jpeg', 0.8);
     
-    // NUEVO: Guardar la foto en IndexedDB y refrescar la galería
+    
     savePhoto(imageDataURL).then(() => {
         loadAndRenderPhotos(); 
     });
     
     console.log('Foto capturada en base64:', imageDataURL.length, 'caracteres');
     
-    // Si deseas que la cámara se cierre automáticamente, descomenta la línea de abajo:
-    // closeCamera(); 
+   
+    closeCamera(); 
 }
 
 function closeCamera() {
@@ -91,9 +89,7 @@ function closeCamera() {
 }
 
 
-// ======================================================================
-// 💾 LÓGICA DE INDEXEDDB (ALMACENAMIENTO)
-// ======================================================================
+
 const DB_NAME = 'CamaraPhotoDB';
 const STORE_NAME = 'photos';
 const DB_VERSION = 1;
@@ -187,7 +183,7 @@ async function deletePhoto(id) {
         const request = store.delete(id); 
 
         request.onsuccess = () => {
-            // SOLO MENSAJE EN CONSOLA (eliminación de toast/confirmación)
+         
             console.log('Foto eliminada con id:', id); 
             loadAndRenderPhotos(); 
             resolve();
@@ -197,9 +193,7 @@ async function deletePhoto(id) {
     });
 }
 
-// ======================================================================
-// 🖼️ LÓGICA DE GALERÍA
-// ======================================================================
+
 
 function renderGallery(photos) {
     photoGallery.innerHTML = ''; 
@@ -214,7 +208,7 @@ function renderGallery(photos) {
         img.src = photo.dataURL;
         img.title = 'Tomada el: ' + new Date(photo.timestamp).toLocaleString();
         
-        // Listener para eliminar foto individual: ELIMINACIÓN INMEDIATA (sin confirm/toast)
+      
         img.addEventListener('click', () => {
             deletePhoto(photo.id); 
         });
@@ -224,21 +218,19 @@ function renderGallery(photos) {
 }
 
 
-// ======================================================================
-// 🔗 EVENT LISTENERS E INICIALIZACIÓN
-// ======================================================================
 
-// Event listeners para la interacción del usuario
+
+
 openCameraBtn.addEventListener('click', openCamera);
 takePhotoBtn.addEventListener('click', takePhoto);
-// Listener para el botón de limpieza de galería
+
 clearPhotosBtn.addEventListener('click', () => {
     if (confirm('¿Estás seguro de que quieres borrar TODAS las fotos de la galería? Esta acción es irreversible.')) {
         clearAllPhotos();
     }
 }); 
 
-// Inicialización: Abrir DB y cargar fotos al cargar la página
+
 document.addEventListener('DOMContentLoaded', async () => {
     try {
         await openDB(); 
@@ -248,7 +240,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
-// Limpiar stream cuando el usuario cierra o navega fuera de la página
+
 window.addEventListener('beforeunload', () => {
     closeCamera();
+
 });
