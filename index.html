@@ -10,7 +10,27 @@
       #cameraContainer { display: none; margin-top: 1rem; }
       video { width: 100%; max-width: 480px; border-radius: 8px; background:#000; }
       canvas { display:none; }
-      #fotoContainer img { max-width: 100%; border-radius:8px; margin-top: .75rem; }
+      /* Estilos para la galería */
+      #photoGallery {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 10px;
+          margin-top: 1rem;
+          border: 1px solid #ccc;
+          padding: 10px;
+          border-radius: 4px;
+      }
+      #photoGallery img { 
+          width: 100px; 
+          height: 100px; 
+          object-fit: cover; 
+          border-radius: 4px;
+          cursor: pointer;
+          transition: transform 0.2s;
+      }
+      #photoGallery img:hover {
+          transform: scale(1.05);
+      }
     </style>
 </head>
 <body>
@@ -28,7 +48,15 @@
 
     <div id="fotoContainer" aria-live="polite"></div>
 
-  
+    <div id="galleryContainer">
+        <h2>Galería de Fotos</h2>
+        <div id="photoGallery" aria-live="polite">
+            <p id="emptyGalleryMsg">La galería está vacía.</p>
+        </div>
+        <p>
+            <button id="clearPhotosBtn" style="margin-top: 1rem; background-color: #d9534f; color: white; border: none; padding: 10px 15px; border-radius: 4px;">Limpiar Galería (Borrar todas las fotos)</button>
+        </p>
+    </div>
     <script src="app.js"></script>
 </body>
 </html>
