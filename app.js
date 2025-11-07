@@ -7,27 +7,30 @@ if('serviceWorker' in navigator) {
     });
 }
 
-
 const openCameraBtn = document.getElementById('openCamera');
 const cameraContainer = document.getElementById('cameraContainer');
 const video = document.getElementById('video');
 const takePhotoBtn = document.getElementById('takePhoto');
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d'); 
-
 const clearPhotosBtn = document.getElementById('clearPhotosBtn'); 
 const photoGallery = document.getElementById('photoGallery'); 
+const switchCameraBtn = document.getElementById('switchCameraBtn'); 
 
 let stream = null; 
+let currentFacingMode = 'user'; 
 
 
 
 async function openCamera() {
+    if (stream) {
+        closeCamera();
+    }
+    
     try {
         const constraints = {
             video: {
-                
-                facingMode: { ideal: 'user' }, 
+                facingMode: { ideal: currentFacingMode }, 
                 width: { ideal: 320 },
                 height: { ideal: 240 }
             }
@@ -40,12 +43,21 @@ async function openCamera() {
         cameraContainer.style.display = 'block';
         openCameraBtn.textContent = 'Cámara Abierta';
         openCameraBtn.disabled = true;
+        switchCameraBtn.disabled = false;
         
-        console.log('Cámara abierta exitosamente (frontal)');
+        console.log(`Cámara abierta exitosamente: ${currentFacingMode}`);
     } catch (error) {
         console.error('Error al acceder a la cámara:', error);
         alert('No se pudo acceder a la cámara. Asegúrate de dar permisos.');
+        openCameraBtn.disabled = false;
+        switchCameraBtn.disabled = true;
     }
+}
+
+function switchCamera() {
+    currentFacingMode = (currentFacingMode === 'user') ? 'environment' : 'user';
+    console.log(`Cambiando a cámara: ${currentFacingMode}`);
+    openCamera(); 
 }
 
 function takePhoto() {
@@ -54,23 +66,17 @@ function takePhoto() {
         return;
     }
 
-    
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
     
-    
     const imageDataURL = canvas.toDataURL('image/jpeg', 0.8);
-    
     
     savePhoto(imageDataURL).then(() => {
         loadAndRenderPhotos(); 
     });
     
     console.log('Foto capturada en base64:', imageDataURL.length, 'caracteres');
-    
-   
-    closeCamera(); 
 }
 
 function closeCamera() {
@@ -83,6 +89,7 @@ function closeCamera() {
         
         openCameraBtn.textContent = 'Abrir Cámara';
         openCameraBtn.disabled = false;
+        switchCameraBtn.disabled = true;
         
         console.log('Cámara cerrada');
     }
@@ -183,7 +190,6 @@ async function deletePhoto(id) {
         const request = store.delete(id); 
 
         request.onsuccess = () => {
-         
             console.log('Foto eliminada con id:', id); 
             loadAndRenderPhotos(); 
             resolve();
@@ -192,7 +198,6 @@ async function deletePhoto(id) {
         request.onerror = event => reject(event.target.error);
     });
 }
-
 
 
 function renderGallery(photos) {
@@ -208,7 +213,6 @@ function renderGallery(photos) {
         img.src = photo.dataURL;
         img.title = 'Tomada el: ' + new Date(photo.timestamp).toLocaleString();
         
-      
         img.addEventListener('click', () => {
             deletePhoto(photo.id); 
         });
@@ -219,17 +223,15 @@ function renderGallery(photos) {
 
 
 
-
-
 openCameraBtn.addEventListener('click', openCamera);
 takePhotoBtn.addEventListener('click', takePhoto);
+switchCameraBtn.addEventListener('click', switchCamera); 
 
 clearPhotosBtn.addEventListener('click', () => {
     if (confirm('¿Estás seguro de que quieres borrar TODAS las fotos de la galería? Esta acción es irreversible.')) {
         clearAllPhotos();
     }
 }); 
-
 
 document.addEventListener('DOMContentLoaded', async () => {
     try {
@@ -240,8 +242,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
-
 window.addEventListener('beforeunload', () => {
     closeCamera();
-
 });
